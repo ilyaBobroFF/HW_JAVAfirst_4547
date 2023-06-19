@@ -1,42 +1,42 @@
-// 1) Дана строка sql-запроса "select * from students WHERE ". Сформируйте часть WHERE этого запроса, используя StringBuilder. 
-// Данные для фильтрации приведены ниже в виде json-строки.
-// Если значение null, то параметр не должен попадать в запрос.
-// Пример данной строки {"name":"Ivanov", "country":"Russia", "city":"Moscow", "age":"null"}
-// Вывод: select * from students WHERE name=Ivanov AND country=Russia AND city=Moscow
-// import java.util.Scanner;
+// Пусть дан произвольный список целых чисел.
+// 1) Нужно удалить из него чётные числа
+// 2) Найти минимальное значение
+// 3) Найти максимальное значение
+// 4) Найти среднее ариф. значение
+
+package HomeWork3;
+
+import java.util.ArrayList;
+
 public class Task1 {
     public static void main(String[] args) {
-                
-        String[] stroka = {"name", "Ivanov", "country", "Russia", "city", "Moscow", "age", "null"}; // Входной массив строк. Сделана не большая "халтура" ':' 
-                                                                                                    // сразу замено на ',' что бы убрать работу с JSON строкой.
+        ArrayList<Integer> inNumbers = new ArrayList<Integer>();
+        
+        
+        for (int index = 0; index < 20; index++) {
+            inNumbers.add(index, 1 + (int)(Math.random()*100));
+        }
+        System.out.println("Входной список: " + inNumbers);   // Вывод исходного списка чисел
 
-        int newSizeMinus = 0;
-        for (String i : stroka){  
-            if (i == "null"){
-                newSizeMinus += 2;
-            }
+        ArrayList<Integer> numbers1 = new ArrayList<Integer>(inNumbers);
+        numbers1.removeIf(i -> i % 2 == 0);
+        System.out.println("Список без четных элементов: " + numbers1);    // Вывод результата первого задания
+        
+        int max = inNumbers.get(0);
+        int min = inNumbers.get(0);
+        double sum = inNumbers.get(0);
+        for (int i = 1; i < inNumbers.size(); i++) {
+            sum += inNumbers.get(i);
+            if (inNumbers.get(i) > max) max = inNumbers.get(i);
+            if (inNumbers.get(i) < min) min = inNumbers.get(i);
         }
-        String [][] newStroka = new String [(stroka.length - newSizeMinus) / 2][2]; 
-        int step = 1;
-        while (step < newStroka.length * 2) {
-            String [] newLine = new String [2];
-            if (stroka[step] != "null"){
-                newLine[0] = stroka[step - 1];
-                newLine[1] = stroka[step];
-                newStroka [(step-1) / 2] = newLine;
-            }
-            step += 2;
-        }
+        sum /= inNumbers.size();
 
-        StringBuffer result = new StringBuffer("select * from students");
-        if(newStroka.length > 0){
-            result.append(" WHERE ");
-            for (int i = 0; i < newStroka.length - 1; i++){  
-                result.append(newStroka[i][0] + "="+ newStroka[i][1] + " AND ");
-            }
-            result.append(newStroka[newStroka.length - 1][0] + "="+ newStroka[newStroka.length - 1][1]);  
-        }
-        System.out.println(result);
-     
+        System.out.println("Максимальное число = " + max);  // Вывод результата второго задания
+        System.out.println("Максимальное число = " + min);  // Вывод результата третьего задания
+        System.out.println("Среднее арифметическое = " + sum); // Вывод результата четвертого задания
+
     }
 }
+
+    
