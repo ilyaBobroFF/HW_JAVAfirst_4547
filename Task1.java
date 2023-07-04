@@ -1,80 +1,129 @@
-// Даны два Deque, представляющие два целых числа. Цифры хранятся в обратном порядке и каждый из их узлов содержит одну цифру.
-// 1) Умножьте два числа и верните произведение в виде связанного списка.
-// 2) Сложите два числа и верните сумму в виде связанного списка.
-// Одно или два числа могут быть отрицательными.
-
-// Даны два Deque, цифры в обратном порядке.
-// [3,2,1] - пример Deque
-// [5,4,3]- пример второго Deque
-// 1) 123 * 345 = 42 435
-// Ответ всегда - связный список, в обычном порядке
-// [4,2,4,3,5] - пример ответа
+package HomeWork5;
 
 
-package HomeWork4;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.LinkedList;
+// Реализуйте структуру телефонной книги с помощью HashMap.
+// Программа также должна учитывать, что во входной структуре будут повторяющиеся имена с разными телефонами, их необходимо считать, как одного человека с разными телефонами. Вывод должен быть отсортирован по убыванию числа телефонов.
+
+// Пример меню:
+// 1) Добавить контакт
+// 2) Вывести всех
+// 3) Выход
+
+// Иванов 123432
+// Иванов 546457
+// Иванов 788354
+
+// Map<String, ArrayList> ---- {Иванов:[23145, 456745, 56787], Петров:[4325, 45674]}
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Task1 {
+    
+
+    
     public static void main(String[] args) {
-        System.out.println("Минус хотя бы в одном элементе делает отрицательным все число!!!");   // Вводная фраза
 
-        Deque<Integer> numbers1 = inputNumbersInDeque("Введите количество элементов первого числа: ");   // Получение  Deque в обратном порядке из введеных чисел (знак учитывается)
-        Deque<Integer> numbers2 = inputNumbersInDeque("Введите количество элементов второго числа: ");
-        
-
-        int intNum1 = dequeInInt(numbers1); // Перевод списков в int
-        int intNum2 = dequeInInt(numbers2);
-    
-    
-        
-        LinkedList<Character> result = intInLinkedList(intNum1 * intNum2);                       // Вычисление и вывод ответов
-        System.out.println("Список равный уножению чисел приведен ниже: \n Ответ1 = " + result);     
-        result = intInLinkedList(intNum1 + intNum2);
-        System.out.println("Список равный сложению чисел приведен ниже: \n Ответ2 = " + result);
-    }   
-    
-    
-    public static Deque<Integer> inputNumbersInDeque(String nameInput) {   // Получение Deque в обраном порядке из вводимых элементов
-        Scanner sc = new Scanner(System.in, "cp866");
-        System.out.println(nameInput);
-        int size = Integer.parseInt(sc.nextLine());
-        Deque<Integer> numbers = new ArrayDeque<Integer>();
-        for (int i = 0; i < size; i++) {
-            System.out.println("Введите текущий элемент по одному числу: ");
-            numbers.push(Integer.parseInt(sc.nextLine()));
-        }
-    //    sc.close();   // При втором вызове метода возникает ошибка. Пока оставленно так.
-        return numbers;
-        
-    }
-    
-    public static int dequeInInt(Deque<Integer> numbers) {     // Преобразование Deque в число int
-        int step = 1;
-        int res = 0;
-        boolean minus = false;
-        for (int i : numbers) {
-            if (i <0 ){
-                i *= -1;
-                minus = true;
+        Map<String, ArrayList<Integer>> phoneBook = new HashMap<>(); // Основной список контактов
+        phoneBook = FirstInput();
+        Boolean work = true;
+        while(work){
+            Scanner sc = new Scanner(System.in, "cp866");
+            System.out.println("Введите режим работы: \n1. Добавить контакт. \n2. Вывести всех. \n3. Выход.");
+            System.out.print("Ваш ввод: ");
+            int mode = Integer.parseInt(sc.nextLine());
+            switch (mode) {
+                case 1: {
+                    AddName(phoneBook);
+                    break;
+                }
+                case 2:{
+                    ArrayList<String> sort = new ArrayList<String>(); //Сортировка
+                    sort = SortedPhone(phoneBook);
+                    Printbook(phoneBook, sort); // Вывод на печать
+                    break;
+                }
+                default:
+                work = false;
+                System.out.println("Выполнен выход");
+                    break;
             }
-            res += step * i;
-            step *= 10;
+            
         }
-        if (minus) res *= -1;
-        return res;
-    }
+        
     
-    public static LinkedList<Character> intInLinkedList(int number) { // Вывод ответа. Реализовано так, что минус отображается как отдельный символ. В задании про это не сказанно.
-        String element = Integer.toString(number);
-        char[] res = element.toCharArray();
-        LinkedList<Character> result = new LinkedList<Character>();
-        for (char el : res) {
-            result.addLast(el);
+    }
+
+    // Первая запись списка контактов
+    public static Map<String, ArrayList<Integer>> FirstInput (){   // Первая запись списка контактов
+        Map<String, ArrayList<Integer>> result = new HashMap<>();
+
+        result.put("Достоевский", new ArrayList<Integer>()
+            {{add(781454);}});
+
+        result.put("Тютчев", new ArrayList<Integer>()
+            {{add(456987); add(987456); add(569741);}});
+
+        result.put("Фет", new ArrayList<Integer>()
+            {{add(456987); add(369852);}});
+
+        result.put("Крылов", new ArrayList<Integer>()
+            {{add(698142); add(954365); add(698471); add(852369);}});
+        return result;
+    }
+
+    // Сортировка списка контактов по по убыванию количества номеров
+    public static ArrayList<String> SortedPhone (Map<String, ArrayList<Integer>> input){ 
+        int max = 0;
+        int step = 0;
+        String maxName = "";
+        ArrayList<String> result = new ArrayList<String>();
+        while (step < input.size()){
+            for (String el: input.keySet()){
+                if(!result.contains(el)){
+                    if(input.get(el).size() >= max) {
+                        max = input.get(el).size();
+                        maxName = el;
+                    }
+                }
+            }
+            max = 0;
+            result.add(maxName);
+            step++;
         }
-        return result;    
+        return result;  
     }
-    
+    // Вывод на печать всего списка контактов
+    public static void Printbook(Map<String, ArrayList<Integer>> input, ArrayList<String> sorted){
+        for (String el: sorted){
+            System.out.print(el + ": ");
+            System.out.println(input.get(el));
+            
+        }
+        System.out.println("Список контактов выведен!\n");
+    }
+    // Добавление нового контакта
+    public static Map<String, ArrayList<Integer>> AddName (Map<String, ArrayList<Integer>> input) {
+        Map<String, ArrayList<Integer>> result = new HashMap<>();
+        result = input;
+        Scanner sc = new Scanner(System.in, "cp866");
+        System.out.println("Введите фамилию для добавления");
+        String newName = sc.nextLine();
+        System.out.println("Введите новые номера телефонов для добавления. Через пробел");
+        String innumbers = sc.nextLine();
+        if (input.containsKey(newName)) System.out.println("Это имя уже есть. Номера будут перезаптсанны");
+        String[] numbers = innumbers.split(" ");
+        ArrayList<Integer> numbersint = new ArrayList<>();
+        for (String el: numbers) {
+            numbersint.add(Integer.parseInt(el)) ;
+        }
+        result.put(newName, numbersint);
+        
+        return result;
+        
+        
+    }
 }
+    
